@@ -1,0 +1,42 @@
+# ============================================================
+# Uncensored_Mode 覆盖层
+# 处理 NSFW/R18G 内容时强制:
+#   1) 翻译引擎强制切换为 local_llm (云端受限 API 全部旁路)
+#   2) 本地模型加载无审查系统提示词, 原汁原味直译
+#   3) 图像修复引擎保持 bypass_safety
+# 用法: python cli.py --input ... --nsfw
+# ============================================================
+
+translate:
+  uncensored: true
+  engine: local_llm
+  context_pages: 5
+  engines:
+    deepl:       # 以下云端引擎在无审查模式下不可用(管道会告警并切换)
+      kwargs:
+        enabled: false
+    tencent:
+      kwargs:
+        enabled: false
+    openai:
+      kwargs:
+        enabled: false
+    local_llm:
+      kwargs:
+        uncensored_model: null   # 建议指定无审查专用模型, 如 dolphin-mixtral:8x7b
+        temperature: 0.5
+
+inpaint:
+  engines:
+    sd:
+      kwargs:
+        bypass_safety: true
+
+ocr:
+  engines:
+    google_vision:   # 云端 OCR 含审查, 无审查模式下禁止使用
+      kwargs:
+        enabled: false
+    baidu:
+      kwargs:
+        enabled: false

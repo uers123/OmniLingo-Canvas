@@ -1,0 +1,23 @@
+# 场景预设: 游戏截图 / UI 本地化
+ocr:
+  engine: paddle
+  lang: jp
+  reading_order: ltr_horizontal
+  min_confidence: 0.5
+
+translate:
+  engine: local_llm
+  task_type: game_ui
+  target_lang: zh-CN
+  max_context_chars: 3000
+
+inpaint:
+  engine: lama
+  mask:
+    dilation_px: 3
+    feather: 1
+
+render:
+  target_lang: zh-CN
+  effects:
+    stroke_ratio: 0.06

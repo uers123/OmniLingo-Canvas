@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mtl"
+version = "0.1.0"
+description = "泛用型跨语种多任务图像本地化与翻译通用框架 (Project A 2.0)"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6.0",
+    "numpy>=1.24",
+    "Pillow>=10.0",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+ocr = ["paddleocr>=2.7", "manga-ocr>=0.1.7", "pytesseract>=0.3.10"]
+pdf = ["PyMuPDF>=1.23"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+mtl = "mtl.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["mtl*"]

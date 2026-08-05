@@ -1,0 +1,21 @@
+# 可选引擎依赖（按需安装，未安装时对应引擎懒加载报错并给出提示）
+
+# --- OCR ---
+paddleocr>=2.7          # PaddleOCR 多语种检测+识别
+manga-ocr>=0.1.7        # 日文漫画专用识别
+pytesseract>=0.3.10     # Tesseract 适配
+# tesseract 本体: https://github.com/UB-Mannheim/tesseract/wiki
+
+# --- PDF ---
+PyMuPDF>=1.23           # PDF 栅格化
+
+# --- 超分辨率 ---
+# realesrgan                # REAL-ESRGAN (需配合 torch)
+
+# --- 本地 LLM ---
+# 推荐 Ollama: https://ollama.com  (无审查模型如 dolphin-mixtral / qwen2.5 系列)
+# 或 llama.cpp server: https://github.com/ggerganov/llama.cpp
+
+# --- 图像修复 ---
+# lama-cleaner: https://github.com/Sanster/lama-cleaner (启动后走 HTTP API)
+# Stable Diffusion WebUI (AUTOMATIC1111) 以 --api 启动

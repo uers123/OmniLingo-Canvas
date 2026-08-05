@@ -1,0 +1,19 @@
+# 场景预设: 全彩插画 / 画集
+ocr:
+  engine: paddle
+  lang: jp
+  reading_order: ltr_horizontal
+
+translate:
+  engine: local_llm
+  task_type: illustration
+  target_lang: zh-CN
+
+inpaint:
+  engine: sd
+  mask:
+    dilation_px: 6
+    feather: 3
+
+render:
+  target_lang: zh-CN

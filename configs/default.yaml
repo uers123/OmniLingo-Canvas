@@ -1,0 +1,182 @@
+# ============================================================
+# 凸显翻译 · 全链路默认配置 (Project A 2.0)
+# 合并顺序: default.yaml -> profiles/<场景>.yaml -> nsfw.yaml
+# 支持 ${环境变量名} 引用, 未设置时启动报错
+# ============================================================
+
+project:
+  name: mtl
+  version: 0.1.0
+
+pipeline:
+  stages:                  # 阶段开关, 逐阶段可断
+    preprocess: true
+    classify: true
+    ocr: true
+    translate: true
+    inpaint: true
+    render: true
+    quality: true
+    export: true
+  workers: 2                 # 并行页数(多线程); 每 worker 约 +1~2GB 内存
+  context_pages: 5         # 翻译上下文: 当前页 + 前序 N 页
+
+inputs:
+  formats: [png, jpg, jpeg, webp, bmp, tif, tiff, gif, pdf, zip]
+  zip_password: null       # 加密 ZIP 密码
+  pdf:
+    dpi: 300
+    first_page: null       # null=全部
+    last_page: null
+
+preprocess:
+  superres:
+    enabled: false
+    engine: realesrgan     # realesrgan | none
+    scale: 2
+    denoise: 0.5
+
+classify:
+  engine: heuristic        # heuristic | ml(预留)
+  threshold_color: 0.08    # 彩色像素占比低于此值判为灰度类
+
+ocr:
+  engine: paddle
+  lang: jp                 # 源语言: jp/zh/en/ko...
+  min_confidence: 0.45     # 低于此置信度的区域被丢弃
+  reading_order: auto      # rtl_vertical | ltr_horizontal | auto
+  noise_filter:            # 噪声过滤: 水印/页码/画面杂物
+    min_len: 2             # 文本最短长度(含假名/汉字)
+    drop_pure_digits: true # 纯数字(页码等)
+    drop_latin_short: true # 短拉丁串(Po/Ko等画面杂物)
+    drop_latin_vowelless: true  # 无元音拉丁串(水印密文如 jmcmic)
+    blacklist: [jmcmic]
+  engines:
+    paddle:
+      module: mtl.ocr.engines.paddle
+      kwargs:
+        lang: jp
+        use_angle_cls: true
+    manga_ocr:
+      module: mtl.ocr.engines.manga_ocr
+      kwargs:
+        detector: paddle   # manga-ocr 只做识别, 检测复用 paddle
+        lang: jp
+    tesseract:
+      module: mtl.ocr.engines.tesseract
+      kwargs:
+        cmd: tesseract
+        lang: jpn
+    google_vision:
+      module: mtl.ocr.engines.cloud
+      kwargs:
+        provider: google
+        api_key_env: GOOGLE_VISION_API_KEY
+        lang: ja
+    baidu:
+      module: mtl.ocr.engines.cloud
+      kwargs:
+        provider: baidu
+        api_key_env: BAIDU_OCR_API_KEY
+        secret_env: BAIDU_OCR_SECRET
+        lang: JAP
+
+translate:
+  engine: local_llm
+  task_type: manga         # manga | game_ui | document | illustration
+  target_lang: zh-CN
+  uncensored: false        # Uncensored_Mode: true 时强制本地无审查引擎
+  max_context_chars: 6000
+  glossary: null           # 术语词典路径 (csv/json), 或 null
+  engines:
+    deepl:
+      module: mtl.translate.engines.deepl
+      kwargs:
+        api_key_env: DEEPL_API_KEY
+        target_lang: ZH
+    tencent:
+      module: mtl.translate.engines.tencent
+      kwargs:
+        secret_id_env: TENCENT_SECRET_ID
+        secret_key_env: TENCENT_SECRET_KEY
+        source: jp
+        target: zh
+    openai:
+      module: mtl.translate.engines.openai
+      kwargs:
+        base_url: https://api.openai.com/v1
+        api_key_env: OPENAI_API_KEY
+        model: gpt-4o-mini
+        target_lang: zh-CN
+        temperature: 0.3
+    local_llm:
+      module: mtl.translate.engines.local_llm
+      kwargs:
+        base_url: http://127.0.0.1:11434   # Ollama 默认端口
+        model: qwen2.5:7b
+        target_lang: zh-CN
+        temperature: 0.1
+        api_type: ollama                   # ollama | llama_cpp
+        uncensored_model: null             # 无审查模式专用模型, null=沿用 model
+        timeout: 120
+
+inpaint:
+  engine: lama
+  mask:
+    dilation_px: 4         # 蒙版膨胀, 避免边缘残留
+    feather: 2             # 羽化半径
+  engines:
+    lama:
+      module: mtl.inpaint.engines.lama
+      kwargs:
+        base_url: http://127.0.0.1:7860
+        model: lama
+    sd:
+      module: mtl.inpaint.engines.sd
+      kwargs:
+        base_url: http://127.0.0.1:7861   # A1111 WebUI --api
+        bypass_safety: true               # 旁路安全过滤(需配合无审查模型启动)
+        steps: 28
+        cfg_scale: 7.0
+        denoising: 1.0
+
+render:
+  target_lang: zh-CN
+  style_map:               # 区域类型 -> 字体风格 (bold/handwriting/regular)
+    sfx: bold
+    caption: handwriting
+    bubble: regular
+    background: bold
+    unknown: regular
+  fonts:                   # 各语种字体路径; 留空自动探测系统字体
+    zh:
+      regular: ""
+      bold: ""
+      handwriting: ""
+    en:
+      regular: ""
+      bold: ""
+  effects:
+    stroke_ratio: 0.08     # 描边宽度 = 字号 * ratio
+    shadow:
+      enabled: true
+      offset: [2, 2]
+      alpha: 0.5
+    text_alpha: 1.0
+  max_fill_ratio: 0.95     # 文字占用目标框的最大比例
+  min_font_size: 8
+
+export:
+  out_dir: ./output
+  formats: [png, json]     # png | json | jpeg
+  save_layers: true        # 透明文字图层 (可拖入 Photoshop)
+  save_masks: false        # 保存蒙版
+  quality: 95
+
+quality:
+  max_retries: 1           # 质检失败后重新 inpaint+render 的最大次数
+  ocr_check_threshold: 0.7 # OCR 复检: 译文在成品图中被找到的比例阈值
+  ssim_threshold: 0.85     # 非修复区与原图的结构相似度阈值
+  residual_sensitivity: 0.5
+  pass_threshold: 0.7      # 综合分阈值
+  weights: {ocr: 0.35, ssim: 0.35, residual: 0.3}

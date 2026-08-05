@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 运行时数据（不提交）
+input/
+output/
+*.log
+
+# 环境
+.env
+*.local
+
+# 编辑器/系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 测试临时产物
+_test_*/
+_smoke*/

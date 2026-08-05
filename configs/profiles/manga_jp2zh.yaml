@@ -1,0 +1,20 @@
+# 场景预设: 日文漫画 -> 中文
+ocr:
+  engine: paddle
+  lang: jp
+  reading_order: rtl_vertical   # 日漫从右到左竖排
+
+translate:
+  engine: local_llm
+  task_type: manga
+  target_lang: zh-CN
+  glossary: configs/glossary/imouto_hentai.csv
+
+inpaint:
+  engine: lama
+  mask:
+    dilation_px: 4
+
+render:
+  target_lang: zh-CN
+  vertical: auto

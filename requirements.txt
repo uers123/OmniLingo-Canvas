@@ -1,0 +1,5 @@
+# 核心依赖（管道骨架必需）
+pyyaml>=6.0
+numpy>=1.24
+Pillow>=10.0
+requests>=2.31

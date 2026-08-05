@@ -1,0 +1,25 @@
+# 场景预设: 扫描文档 / 文字密集型材料
+ocr:
+  engine: paddle
+  lang: jp
+  reading_order: ltr_horizontal
+  min_confidence: 0.6
+
+translate:
+  engine: local_llm
+  task_type: document
+  target_lang: zh-CN
+  context_pages: 3
+
+inpaint:
+  engine: lama
+  mask:
+    dilation_px: 2
+    feather: 0
+
+render:
+  target_lang: zh-CN
+  effects:
+    shadow:
+      enabled: false
+    stroke_ratio: 0.04
