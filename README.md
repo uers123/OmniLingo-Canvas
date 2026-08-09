@@ -56,10 +56,7 @@ python cli.py --input ./漫画目录 --until ocr
 
 ### Web UI
 
-```bash
-python webui.py            # 打开 http://127.0.0.1:7861
-# 或双击 start_ui.bat / start_all.bat
-```
+> ⚠️ Web UI（`webui.py` / `start_ui.bat`）尚未包含在当前仓库中，请使用命令行入口。
 
 ## 🗂️ 项目结构
 
