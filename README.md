@@ -26,9 +26,10 @@
 
 ### 安装
 
-> ⚠️ 注意：当前仓库**未包含** `requirements.txt` / `requirements-optional.txt` / `webui.py` / `tests/`。
-> 请根据 `mtl/` 各模块的 import 自行安装依赖（如 `paddleocr`、`pytesseract`、`Pillow`、`PyYAML` 等），
-> 或等待作者补全工程化文件。当前唯一可用入口为命令行 `python cli.py`。
+```bash
+pip install -r requirements.txt            # 核心依赖
+pip install -r requirements-optional.txt   # 可选引擎 (paddleocr / lama-cleaner)
+```
 
 可选本地服务：
 
@@ -56,7 +57,10 @@ python cli.py --input ./漫画目录 --until ocr
 
 ### Web UI
 
-> ⚠️ Web UI（`webui.py` / `start_ui.bat`）尚未包含在当前仓库中，请使用命令行入口。
+```bash
+python webui.py            # 打开 http://127.0.0.1:7861
+# 或双击 start_ui.bat / start_all.bat
+```
 
 ## 🗂️ 项目结构
 
@@ -71,6 +75,7 @@ mtl/
 ├── io/           # 多格式输入与工程化导出
 └── pipeline.py   # 全链路编排（阶段开关/并行/事件回调）
 configs/          # 默认配置 + 场景预设 + 术语词典
+webui.py          # Gradio Web 界面
 ```
 
 ## 🎛️ 配置
@@ -98,7 +103,7 @@ render:
 ## 📄 文档
 
 - [商业化评估](docs/商业化评估.md)
-- 测试：⚠️ `tests/` 目录尚未包含在当前仓库中
+- [测试](tests/test_core.py) — 核心单元测试
 
 ## 🔒 合规声明
 
