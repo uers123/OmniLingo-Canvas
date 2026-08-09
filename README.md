@@ -26,10 +26,9 @@
 
 ### 安装
 
-```bash
-pip install -r requirements.txt            # 核心依赖
-pip install -r requirements-optional.txt   # 可选引擎 (paddleocr / lama-cleaner)
-```
+> ⚠️ 注意：当前仓库**未包含** `requirements.txt` / `requirements-optional.txt` / `webui.py` / `tests/`。
+> 请根据 `mtl/` 各模块的 import 自行安装依赖（如 `paddleocr`、`pytesseract`、`Pillow`、`PyYAML` 等），
+> 或等待作者补全工程化文件。当前唯一可用入口为命令行 `python cli.py`。
 
 可选本地服务：
 
