@@ -71,7 +71,6 @@ mtl/
 ├── io/           # 多格式输入与工程化导出
 └── pipeline.py   # 全链路编排（阶段开关/并行/事件回调）
 configs/          # 默认配置 + 场景预设 + 术语词典
-webui.py          # Gradio Web 界面
 ```
 
 ## 🎛️ 配置
